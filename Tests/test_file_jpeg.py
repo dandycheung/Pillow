@@ -154,7 +154,7 @@ class TestFileJpeg:
             assert k > 0.9
 
     def test_rgb(self) -> None:
-        def getchannels(im: JpegImagePlugin.JpegImageFile) -> tuple[int, int, int]:
+        def getchannels(im: JpegImagePlugin.JpegImageFile) -> tuple[int, ...]:
             return tuple(v[0] for v in im.layer)
 
         im = hopper()
@@ -1044,6 +1044,13 @@ class TestFileJpeg:
         im = hopper("F")
 
         assert im._repr_jpeg_() is None
+
+    def test_deprecation(self) -> None:
+        with Image.open(TEST_FILE) as im:
+            with pytest.warns(DeprecationWarning):
+                assert im.huffman_ac == {}
+            with pytest.warns(DeprecationWarning):
+                assert im.huffman_dc == {}
 
 
 @pytest.mark.skipif(not is_win32(), reason="Windows only")
